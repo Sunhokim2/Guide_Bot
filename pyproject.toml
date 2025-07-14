@@ -1,3 +1,4 @@
+# pyproject.toml
 [project]
 name = "Guide_Bot"
 version = "0.1.0"
@@ -10,30 +11,31 @@ dependencies = [
     "fastapi>=0.111.0",           # FastAPI: 고성능 웹 API를 구축하기 위한 현대적인, 빠른(고성능) 웹 프레임워크
     "uvicorn[standard]>=0.30.1",  # Uvicorn: FastAPI 애플리케이션을 실행하는 ASGI 서버 (standard는 h11, websockets 등 포함)
 
-    # LLM 및 RAG 관련 핵심 라이브러리
-    "openai>=1.35.13",            # OpenAI: OpenAI API와 상호작용하기 위한 공식 Python 클라이언트 라이브러리
+    # LLM 및 RAG 관련 핵심 라이브러리 (AWS Bedrock으로 변경)
+    "boto3>=1.34.128",            # AWS 서비스 (Bedrock)와 상호작용하기 위한 AWS SDK
     "chromadb>=0.5.3",            # ChromaDB: RAG를 위한 벡터 데이터베이스 (내장형 사용 시 편리)
-    "sentence-transformers>=2.7.0", # Sentence Transformers: Hugging Face의 임베딩 모델(예: BGE-M3)을 쉽게 사용하기 위한 라이브러리
+    # Bedrock 임베딩을 사용하므로 sentence-transformers는 필수는 아니지만, 특정 목적에 따라 유지 가능
+    # "sentence-transformers>=2.7.0",
 
-    # LangChain 프레임워크 (모듈화된 최신 버전 사용)
+    # LangChain 프레임워크 (모듈화된 최신 버전 및 AWS 통합)
     "langchain-core>=0.2.14",     # LangChain Core: 프롬프트, 스키마, Runnable 등 LangChain의 핵심 컴포넌트
     "langchain-community>=0.2.11",# LangChain Community: 다양한 데이터 로더, 리트리버, 툴 등 커뮤니티 기여 통합
-    "langchain-openai>=0.1.18",   # LangChain OpenAI: ChatOpenAI, OpenAIEmbeddings 등 OpenAI 모델과의 통합
+    "langchain-aws>=0.1.0",       # LangChain AWS: ChatBedrock, BedrockEmbeddings 등 AWS Bedrock과의 통합
     "langchain-chroma>=0.1.10",   # LangChain Chroma: ChromaDB와의 통합 (LangChain에서 ChromaDB 사용 시 필요)
 
     # 기타 유틸리티
-    "python-dotenv>=1.0.1",       # Python-dotenv: .env 파일에서 환경 변수를 로드하기 위함 (API 키 관리 등에 유용)
-    "pydantic>=2.7.4",            # Pydantic: FastAPI의 데이터 유효성 검사 및 설정 관리에 사용되는 라이브러리 (FastAPI의 의존성으로 자동 설치될 수 있으나, 명시적으로 포함)
-    "transformers>=4.41.2",
-    "faiss-cpu>=1.8.0",
+    "python-dotenv>=1.0.1",       # Python-dotenv: .env 파일에서 환경 변수를 로드하기 위함 (AWS_REGION_NAME 등)
+    "pydantic>=2.7.4",            # FastAPI의 데이터 유효성 검사 및 설정 관리에 사용되는 라이브러리
+    "transformers>=4.41.2",       # sentence-transformers의 의존성일 수 있음 (제거 시 필요에 따라 삭제)
+    "faiss-cpu>=1.8.0",           # ChromaDB의 일부 백엔드로 사용될 수 있음
 ]
-requires-python = ">=3.9,<3.13.6" # 호환되는 Python 버전 범위 지정 (Python 3.13은 아직 일부 ML 라이브러리와 호환성 문제가 있을 수 있어 3.12 이하 권장)
-license = { text = "MIT" } # 프로젝트 라이선스 (예: MIT)
-readme = "README.md" # 프로젝트 루트에 README.md 파일이 있음을 명시합니다. 없으면 삭제하거나 생성하세요.
+requires-python = ">=3.9,<3.13.6" # 호환되는 Python 버전 범위 지정
+license = { text = "MIT" }
+readme = "README.md"
 
 [build-system]
-requires = ["poetry-core>=1.0.0"] # Poetry 빌드 시스템의 요구사항
+requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
-package-mode = false # 이 프로젝트가 애플리케이션으로 실행됨을 나타냅니다.
+package-mode = false
