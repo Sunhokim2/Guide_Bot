@@ -1,0 +1,21 @@
+services:
+  db:
+    image: pgvector/pgvector:0.8.0-pg17
+    container_name: guide_bot_pgvector_db
+    environment:
+      POSTGRES_DB: pgv # Default to 'guide_bot_db' if not set in .env
+      POSTGRES_USER: pgv_user # Default to 'guide_bot_user'
+      POSTGRES_PASSWORD: 1234 # Default password
+    ports:
+      - "5432:5432" # Map host port 5432 to container port 5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "$$POSTGRES_USER", "-d", "$$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:

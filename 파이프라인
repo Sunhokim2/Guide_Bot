@@ -1,0 +1,74 @@
++-------------------+     +-------------------------+
+|   Q&A Source      |     | Embedding Model         |
+| (Raw Text/Docs)   |     +-------------------------+
++-------------------+           |
+        |                       | (1. Initial Q Embedding)
+        |                       V
+        |  (2. Data Ingestion)  +--------------------------------+
+        V                       |  DynamoDB / MongoDB            |
++-------------------+           |  (Stores: id, original_q_text,|
+|   Processing      |           |             a_text,            |
+|    Layer          |           |             q_embedding_vector)|
+| (e.g., Lambda/EC2)|           +--------------------------------+
++-------------------+                   ^
+        |                               | (3. Data for FAISS Indexing)
+        |                               |  (Periodically pulls 'q_embedding_vector' & 'id')
+        V                               V
++-------------------------------------------------------+
+|                      FAISS Vector Store               |
+| (In-memory or Disk-based Index of Q Embeddings from DB)|
++-------------------------------------------------------+
+        ^
+        | (4. User Query Embedding & Search)
+        |
++-----------------------+
+|    User / Frontend    |
+| (Sends Query to Chatbot)|
++-----------------------+
+        |
+        | (5. Chatbot Backend Logic - LangChain)
+        V
++--------------------------------------------------------------------------------+
+|                           Chatbot Application Backend                          |
+|  (e.g., AWS Lambda Function / EC2 Instance running Python/LangChain)           |
++--------------------------------------------------------------------------------+
+        |
+        |  (5a. Embed User Query)
+        V
++-----------------------+
+|  User Query Embedding |
++-----------------------+
+        |
+        |  (5b. Search FAISS for Similar Qs)
+        V
++-------------------------------------------------------+
+|  FAISS Vector Store                                   |
+|  (Returns IDs of Top-K Similar Q Embeddings)          |
++-------------------------------------------------------+
+        |
+        |  (5c. Retrieve Full Q&A Document from DynamoDB/MongoDB using IDs)
+        V
++-------------------------------------------------------+
+|  DynamoDB / MongoDB                                   |
+|  (Returns Document: id, original_q_text, a_text, ...) |
++-------------------------------------------------------+
+        |
+        |  (5d. Construct Prompt with Context & Query)
+        V
++-----------------------+
+|  LangChain Prompting  |
++-----------------------+
+        |
+        |  (5e. Send Prompt to LLM)
+        V
++-----------------------+
+|    AWS Bedrock LLM    |
+| (Generates Answer)    |
++-----------------------+
+        |
+        |  (5f. Return Answer to User)
+        V
++-----------------------+
+|    User / Frontend    |
+| (Receives Chatbot Answer)|
++-----------------------+

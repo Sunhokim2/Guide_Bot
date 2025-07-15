@@ -13,21 +13,26 @@ dependencies = [
 
     # LLM 및 RAG 관련 핵심 라이브러리 (AWS Bedrock으로 변경)
     "boto3>=1.34.128",            # AWS 서비스 (Bedrock)와 상호작용하기 위한 AWS SDK
-    "chromadb>=0.5.3",            # ChromaDB: RAG를 위한 벡터 데이터베이스 (내장형 사용 시 편리)
+    # ChromaDB (pgvector 사용 시 불필요)
+    # "chromadb>=0.5.3",
     # Bedrock 임베딩을 사용하므로 sentence-transformers는 필수는 아니지만, 특정 목적에 따라 유지 가능
-    # "sentence-transformers>=2.7.0",
+    "sentence-transformers>=2.7.0", # 필요에 따라 유지 또는 삭제 (HuggingFaceEmbeddings 사용 시 필요)
 
     # LangChain 프레임워크 (모듈화된 최신 버전 및 AWS 통합)
     "langchain-core>=0.2.14",     # LangChain Core: 프롬프트, 스키마, Runnable 등 LangChain의 핵심 컴포넌트
-    "langchain-community>=0.2.11",# LangChain Community: 다양한 데이터 로더, 리트리버, 툴 등 커뮤니티 기여 통합
+    "langchain-community>=0.2.11",# LangChain Community: 다양한 데이터 로더, 리트리버, 툴 등 커뮤니티 기여 통합 (PGVector 포함)
     "langchain-aws>=0.1.0",       # LangChain AWS: ChatBedrock, BedrockEmbeddings 등 AWS Bedrock과의 통합
-    "langchain-chroma>=0.1.10",   # LangChain Chroma: ChromaDB와의 통합 (LangChain에서 ChromaDB 사용 시 필요)
+
+    # PostgreSQL 및 Pgvector 관련 의존성 추가
+    "psycopg2-binary>=2.9.9",     # PostgreSQL 데이터베이스 드라이버
+    "pgvector",            # Pgvector 파이썬 클라이언트 라이브러리
 
     # 기타 유틸리티
     "python-dotenv>=1.0.1",       # Python-dotenv: .env 파일에서 환경 변수를 로드하기 위함 (AWS_REGION_NAME 등)
     "pydantic>=2.7.4",            # FastAPI의 데이터 유효성 검사 및 설정 관리에 사용되는 라이브러리
     "transformers>=4.41.2",       # sentence-transformers의 의존성일 수 있음 (제거 시 필요에 따라 삭제)
-    "faiss-cpu>=1.8.0",           # ChromaDB의 일부 백엔드로 사용될 수 있음
+    # FAISS (pgvector 사용 시 주된 벡터 스토어 역할은 아님. 필요에 따라 삭제 가능)
+    # "faiss-cpu>=1.8.0",
 ]
 requires-python = ">=3.9,<3.13.6" # 호환되는 Python 버전 범위 지정
 license = { text = "MIT" }
